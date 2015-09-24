@@ -8,10 +8,15 @@ Icon Builder will let you easily generate different sizes of images, be it iOS o
 ## Instructions
 
 Select what kind of icon you want.
+
 ![Select icon type](http://i.imgur.com/VMaswUE.png)
 
 Select the image you want to generate icons from.
 ![Select image](http://i.imgur.com/09tSwBW.png)
 
 Icon Builder will create a folder on your Desktop containing all the generated icons.
-![Generated icons](http://i.imgur.com/fEotQW8.png)
+![Generated icons](http://i.imgur.com/j7Loj8z.png)
+
+
+
+You can then proceed to add these to Xcode
