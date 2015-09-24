@@ -1,4 +1,4 @@
-# Icon-Builder
+# Icon Builder
 
 ## Description
 
