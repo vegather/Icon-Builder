@@ -77,7 +77,7 @@ struct IconSpitter {
 	}
 	
 	private struct iOSTabBarIconType {
-		static let RequiredMinSize: CGFloat = 96
+		static let RequiredMinSize: CGFloat = 75
 		
 		// Key: Icon name suffix
 		// Value: Pixel size
