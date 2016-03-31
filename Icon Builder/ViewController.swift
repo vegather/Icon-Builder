@@ -35,7 +35,7 @@ class ViewController: NSViewController {
 			if result == NSFileHandlingPanelOKButton {
 				let iconURL = openPanel.URLs[0]
 				if let icon = NSImage(contentsOfURL: iconURL) {
-					self.dealWithIcon(icon, withName: self.getFileNameForURL(iconURL))
+					self.dealWithIcon(icon)
 				} else {
 					self.showAlertWithMessage("Could not open the icon",
 						andInformationalText: "Path: \(iconURL)")
@@ -44,29 +44,32 @@ class ViewController: NSViewController {
 		}
 	}
 	
-	private func dealWithIcon(icon: NSImage, withName name: String) {
-		print("Will deal with icon: \(icon) with name: \(name)")
+	private func dealWithIcon(icon: NSImage) {
+		MOONLog("Will deal with icon: \(icon)")
 		
 		let currentIconType = iconTypeForPopUpButton(iconTypePicker)
 		
 		do {
-			let iconsAndNames = try IconSpitter.getIconsFromIcon(icon, forIconType: currentIconType, withIconName: name)
-			print("Got \(iconsAndNames.count) icons")
+			let iconSet = try IconSpitter.getIconsFromIcon(icon, forIconType: currentIconType)
+			MOONLog("Got \(iconSet.icons.count) icons")
 			
 			let desktopPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DesktopDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
-			let iconFolderPath = (desktopPath as NSString).stringByAppendingPathComponent(name)
+			let iconFolderPath = (desktopPath as NSString).stringByAppendingPathComponent(iconSet.folderName)
 			if NSFileManager.defaultManager().fileExistsAtPath(iconFolderPath) == false {
 				do {
 					try NSFileManager.defaultManager().createDirectoryAtPath(iconFolderPath, withIntermediateDirectories: false, attributes: nil)
 					
-					for (iconToSave, iconName) in iconsAndNames {
-						let iconPath = (iconFolderPath as NSString).stringByAppendingPathComponent(iconName)
-						do {
-							try saveIcon(iconToSave, toPath: iconPath)
-						} catch {
-							showAlertWithMessage("Error while saving image", andInformationalText: "Could not save image to path: \(iconPath)")
-						}
-					}
+                    let contentJSONPath = (iconFolderPath as NSString).stringByAppendingPathComponent("Contents.json")
+                    iconSet.contentJSON.writeToFile(contentJSONPath, atomically: true)
+                    
+                    for icon in iconSet.icons {
+                        let iconPath = (iconFolderPath as NSString).stringByAppendingPathComponent(icon.name)
+                        do {
+                            try saveIcon(icon.icon, toPath: iconPath)
+                        } catch {
+                            showAlertWithMessage("Error while saving image", andInformationalText: "Could not save image to path: \(iconPath)")
+                        }
+                    }
 					
 				} catch let error as NSError {
 					showAlertWithMessage("Could not create folder at path \(iconFolderPath)", andInformationalText: error.localizedDescription)
@@ -75,7 +78,9 @@ class ViewController: NSViewController {
 				showAlertWithMessage("Folder \(iconFolderPath) already exists", andInformationalText: "Move that folder to its appropriate location, and try again!")
 			}
 			
-		} catch IconSpitterError.IconNotSquare {
+        } catch IconSpitterError.InternalError {
+            showAlertWithMessage("Internal Error", andInformationalText: "Hit an unexpected error while processing your image. Make sure you are using a png that is large enough (196x196) and square.")
+        } catch IconSpitterError.IconNotSquare {
 			showAlertWithMessage("The icon is not square", andInformationalText: "The icon has width: \(icon.size.width)px and height: \(icon.size.height)px ")
 		} catch IconSpitterError.IconNotBigEnough {
 			showAlertWithMessage("The icon is not big enough", andInformationalText: "The icon has width: \(icon.size.width)px and height: \(icon.size.height)px ")
@@ -118,7 +123,7 @@ class ViewController: NSViewController {
 	}
 	
 	private func showAlertWithMessage(message: String, andInformationalText infoText: String) {
-		print("Will show alert with message: \(message), informativeText: \(infoText)")
+		MOONLog("Will show alert with message: \(message), informativeText: \(infoText)")
 		
 		let alert = NSAlert()
 		alert.alertStyle = NSAlertStyle.WarningAlertStyle

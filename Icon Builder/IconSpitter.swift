@@ -26,6 +26,7 @@ import CoreGraphics
 enum IconSpitterError: ErrorType {
 	case IconNotSquare
 	case IconNotBigEnough
+    case InternalError
 }
 
 
@@ -37,91 +38,18 @@ struct IconSpitter {
 		case iOSToolbarNavbarIcon
 		case MacAppIcon
 	}
+    
+    struct IconSet {
+        struct Icon {
+            let icon: NSImage
+            let name: String
+        }
+        let icons: [Icon]
+        let contentJSON: NSData
+        let folderName: String
+    }
 	
-	
-	
-	// -------------------------------
-	// MARK: iOS Types
-	// -------------------------------
-	
-	private struct iOSAppIconType {
-		static let RequiredMinSize: CGFloat = 1024
-		
-		// Key: Icon name suffix
-		// Value: Pixel size
-		static let Sizes = [
-			"-512@2x.png"	: 1024,
-			"-512@1x.png"	: 512,
-			"-120@1x.png"	: 120,
-			"-98@2x.png"	: 196,
-			"-86@2x.png"	: 172,
-			"-76@2x.png"	: 152,
-			"-76@1x.png"	: 76,
-			"-72@2x.png"	: 144,
-			"-72@1x.png"	: 72,
-			"-60@3x.png"	: 180,
-			"-60@2x.png"	: 120,
-			"-57@2x.png"	: 114,
-			"-57@1x.png"	: 57,
-			"-50@2x.png"	: 100,
-			"-50@1x.png"	: 50,
-			"-44@2x.png"	: 88,
-			"-40@3x.png"	: 120,
-			"-40@2x.png"	: 80,
-			"-40@1x.png"	: 40,
-			"-29@3x.png"	: 87,
-			"-29@2x.png"	: 58,
-			"-29@1x.png"	: 29,
-			"-27_5@2x.png"	: 55,
-			"-24@2.png"		: 48]
-	}
-	
-	private struct iOSTabBarIconType {
-		static let RequiredMinSize: CGFloat = 75
-		
-		// Key: Icon name suffix
-		// Value: Pixel size
-		static let Sizes = [
-			"-25@3x.png"	: 75,
-			"-25@2x.png"	: 50,
-			"-25@1x.png"	: 25]
-	}
-	
-	private struct iOSToolbarNavbarIconType {
-		static let RequiredMinSize: CGFloat = 66
-		
-		// Key: Icon name suffix
-		// Value: Pixel size
-		static let Sizes = [
-			"-22@3x.png"	: 66,
-			"-22@2x.png"	: 44,
-			"-22@1x.png"	: 22]
-	}
-	
-	
-	
-	
-	
-	// -------------------------------
-	// MARK: Mac Types
-	// -------------------------------
-	
-	private struct MacAppIconType {
-		static let RequiredMinSize: CGFloat = 1024
-		
-		// Key: Icon name suffix
-		// Value: Pixel size
-		static let Sizes = [
-			"-1024pt.png"	: 1024,
-			"-512pt.png"	: 512,
-			"-256pt.png"	: 256,
-			"-128pt.png"	: 128,
-			"-64pt.png"		: 64,
-			"-32pt.png"		: 32,
-			"-16pt.png"		: 16]
-	}
-	
-	
+    
 	
 	
 	// -------------------------------
@@ -130,17 +58,17 @@ struct IconSpitter {
 	
 	// Will correctly set the icon names
 	// Throws: IconSpitterError
-	static func getIconsFromIcon(inputIcon: NSImage, forIconType iconType: IconType, withIconName iconName: String) throws -> [(icon: NSImage, name: String)] {
+	static func getIconsFromIcon(inputIcon: NSImage, forIconType iconType: IconType) throws -> IconSet {
 		if inputIcon.size.width == inputIcon.size.height {
 			switch iconType {
 			case .iOSAppIcon:
-				return try produceIOSAppIconsForIcon(inputIcon, withName: iconName)
+                return try produceIconSetForIcon(inputIcon, withJSON: iOSAppIconJSON, folderName: "AppIcon.appiconset")
 			case .iOSTabBarIcon:
-				return try produceIOSTabBarIconsForIcon(inputIcon, withName: iconName)
+                return try produceIconSetForIcon(inputIcon, withJSON: iOSAppIconJSON, folderName: "AppIcon.appiconset")
 			case .iOSToolbarNavbarIcon:
-				return try produceIOSToolbarNavbarIconsForIcon(inputIcon, withName: iconName)
+                return try produceIconSetForIcon(inputIcon, withJSON: iOSAppIconJSON, folderName: "AppIcon.appiconset")
 			case .MacAppIcon:
-				return try produceMacAppIconsForIcon(inputIcon, withName: iconName)
+                return try produceIconSetForIcon(inputIcon, withJSON: OSXAppIconJSON, folderName: "AppIcon.appiconset")
 			}
 		} else {
 			throw IconSpitterError.IconNotSquare
@@ -155,92 +83,69 @@ struct IconSpitter {
 	// MARK: Icon Production
 	// -------------------------------
 	
-	// Throws: IconSpitterError
-	static private func produceIOSAppIconsForIcon(inputIcon: NSImage, withName name: String) throws -> [(icon: NSImage, name: String)] {
-		if inputIcon.size.width >= iOSAppIconType.RequiredMinSize {
-			
-			var icons = [(icon: NSImage, name: String)]()
-			
-			for (nameSuffix, size) in iOSAppIconType.Sizes {
-				if let resizedIcon = resizeIcon(inputIcon, toSize: NSSize(width: size, height: size)) {
-					icons.append((resizedIcon, name + nameSuffix))
-				} else {
-					print("Could not produce IOSAppIcon with name: \(name) for size: \(size)")
-				}
-			}
-			
-			return icons
-		} else {
-			throw IconSpitterError.IconNotBigEnough
-		}
-	}
-	
-	// Throws: IconSpitterError
-	static private func produceIOSTabBarIconsForIcon(inputIcon: NSImage, withName name: String) throws -> [(icon: NSImage, name: String)] {
-		if inputIcon.size.width >= iOSTabBarIconType.RequiredMinSize {
-			
-			var icons = [(icon: NSImage, name: String)]()
-			
-			for (nameSuffix, size) in iOSTabBarIconType.Sizes {
-				if let resizedIcon = resizeIcon(inputIcon, toSize: NSSize(width: size, height: size)) {
-					icons.append((resizedIcon, name + nameSuffix))
-				} else {
-					print("Could not produce IOSTabBarIcon with name: \(name) for size: \(size)")
-				}
-			}
-			
-			return icons
-		} else {
-			throw IconSpitterError.IconNotBigEnough
-		}
-	}
-	
-	// Throws: IconSpitterError
-	static private func produceIOSToolbarNavbarIconsForIcon(inputIcon: NSImage, withName name: String) throws -> [(icon: NSImage, name: String)] {
-		if inputIcon.size.width >= iOSToolbarNavbarIconType.RequiredMinSize {
-			
-			var icons = [(icon: NSImage, name: String)]()
-			
-			for (nameSuffix, size) in iOSToolbarNavbarIconType.Sizes {
-				if let resizedIcon = resizeIcon(inputIcon, toSize: NSSize(width: size, height: size)) {
-					icons.append((resizedIcon, name + nameSuffix))
-				} else {
-					print("Could not produce IOSToolbarNavbarIcon with name: \(name) for size: \(size)")
-				}
-			}
-			
-			return icons
-		} else {
-			throw IconSpitterError.IconNotBigEnough
-		}
-	}
-	
-	// Throws: IconSpitterError
-	static private func produceMacAppIconsForIcon(inputIcon: NSImage, withName name: String) throws -> [(icon: NSImage, name: String)] {
-		if inputIcon.size.width >= MacAppIconType.RequiredMinSize {
-			
-			var icons = [(icon: NSImage, name: String)]()
-			
-			for (nameSuffix, size) in MacAppIconType.Sizes {
-				if let resizedIcon = resizeIcon(inputIcon, toSize: NSSize(width: size, height: size)) {
-					icons.append((resizedIcon, name + nameSuffix))
-				} else {
-					print("Could not produce MacAppIcon with name: \(name) for size: \(size)")
-				}
-			}
-			
-			return icons
-		} else {
-			throw IconSpitterError.IconNotBigEnough
-		}
-	}
-	
+    // Throws: IconSpitterError
+    static private func produceIconSetForIcon(inputIcon: NSImage, withJSON json: [String: AnyObject], folderName: String) throws -> IconSet {
+        var icons = Array<IconSet.Icon>()
+        
+        // Produce Icons from JSON
+        guard let jsonImages = json["images"] as? [[String: String]] else {
+            MOONLog("JSON does not contain images key")
+            throw IconSpitterError.InternalError
+        }
+        
+        for jsonImage in jsonImages {
+            
+            guard let filename = jsonImage["filename"] else {
+                MOONLog("Some keys where missing")
+                throw IconSpitterError.InternalError
+            }
+            
+            var iconAlreadyExists = false
+            for icon in icons {
+                if icon.name == filename {
+                    iconAlreadyExists = true
+                    break
+                }
+            }
+            
+            guard iconAlreadyExists == false else {
+                continue
+            }
+            
+            var nameComponents = filename.componentsSeparatedByString("_")
+            guard nameComponents.count == 2 else {
+                MOONLog("Weird name components for filename: \(filename)")
+                throw IconSpitterError.InternalError
+            }
+            nameComponents = nameComponents[1].componentsSeparatedByString(".")
+            guard nameComponents.count == 2 else {
+                MOONLog("Weird name components for filename: \(filename), json: \(jsonImage)")
+                throw IconSpitterError.InternalError
+            }
+            guard let size = Int(nameComponents[0]) else {
+                MOONLog("Could not get int from nameComponents: \(nameComponents)")
+                throw IconSpitterError.InternalError
+            }
+            
+            if let newIcon = resizeIcon(inputIcon, toSize: NSSize(width: size, height: size)) {
+                icons.append(IconSet.Icon(icon: newIcon, name: filename))
+            }
+        }
+        
+        do {
+            let jsonData = try NSJSONSerialization.dataWithJSONObject(json, options: [])
+            return IconSet(icons: icons, contentJSON: jsonData, folderName: folderName)
+        } catch let error as NSError {
+            MOONLog("Could not produce JSON data with error: \(error)")
+            throw IconSpitterError.InternalError
+        }
+    }
 	
 	
 	
 	
 	// -------------------------------
-	// MARK: Helper Methods
+	// MARK: Icon Factory
 	// -------------------------------
 	
 	static private func resizeIcon(icon: NSImage, toSize newSize: NSSize) -> NSImage? {
