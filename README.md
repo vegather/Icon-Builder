@@ -2,7 +2,7 @@
 
 ## Description
 
-Icon Builder will let you easily generate different sizes of images, be it iOS or OS X app icons, tab bar icons, or toolbar and navbar icons. Icon Builder supports both png and jpg, it will preserve alpha, but it currently only supports square images. 
+Icon Builder will let you easily generate different sizes of images, be it iOS or OS X app icons, tab bar icons, or toolbar and navbar icons. Icon Builder supports both png and jpg, it will preserve alpha, but it currently only supports square images.
 
 
 ## Instructions
@@ -19,4 +19,4 @@ Icon Builder will create a folder on your Desktop containing all the generated i
 
 
 
-You can then proceed to add these to Xcode
+Finally, drag that folder into the asset catalog in Xcode.

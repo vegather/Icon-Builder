@@ -13,7 +13,9 @@
 		9A5331C61B9C8F8A008F47B9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A5331C41B9C8F8A008F47B9 /* Main.storyboard */; };
 		9A5331D11B9C8F8A008F47B9 /* Icon_BuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5331D01B9C8F8A008F47B9 /* Icon_BuilderTests.swift */; };
 		9A5331DC1B9C8F8A008F47B9 /* Icon_BuilderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5331DB1B9C8F8A008F47B9 /* Icon_BuilderUITests.swift */; };
-		9A5331EA1B9C9A89008F47B9 /* IconSpitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5331E91B9C9A89008F47B9 /* IconSpitter.swift */; settings = {ASSET_TAGS = (); }; };
+		9A5331EA1B9C9A89008F47B9 /* IconSpitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5331E91B9C9A89008F47B9 /* IconSpitter.swift */; };
+		9AAB12C61CAD7004009729B0 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAB12C51CAD7004009729B0 /* JSON.swift */; };
+		9AC95E241CAD29FD003EEDE4 /* MOONLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC95E231CAD29FD003EEDE4 /* MOONLogger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		9A5331DB1B9C8F8A008F47B9 /* Icon_BuilderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon_BuilderUITests.swift; sourceTree = "<group>"; };
 		9A5331DD1B9C8F8A008F47B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A5331E91B9C9A89008F47B9 /* IconSpitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconSpitter.swift; sourceTree = "<group>"; };
+		9AAB12C51CAD7004009729B0 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		9AC95E231CAD29FD003EEDE4 /* MOONLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MOONLogger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,7 +103,9 @@
 			children = (
 				9A5331C01B9C8F8A008F47B9 /* ViewController.swift */,
 				9A5331E91B9C9A89008F47B9 /* IconSpitter.swift */,
+				9AAB12C51CAD7004009729B0 /* JSON.swift */,
 				9A5331C41B9C8F8A008F47B9 /* Main.storyboard */,
+				9AC95E231CAD29FD003EEDE4 /* MOONLogger.swift */,
 				9A5331EB1B9C9A95008F47B9 /* Supporting Files */,
 			);
 			path = "Icon Builder";
@@ -262,6 +268,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AC95E241CAD29FD003EEDE4 /* MOONLogger.swift in Sources */,
+				9AAB12C61CAD7004009729B0 /* JSON.swift in Sources */,
 				9A5331C11B9C8F8A008F47B9 /* ViewController.swift in Sources */,
 				9A5331EA1B9C9A89008F47B9 /* IconSpitter.swift in Sources */,
 				9A5331BF1B9C8F8A008F47B9 /* AppDelegate.swift in Sources */,
